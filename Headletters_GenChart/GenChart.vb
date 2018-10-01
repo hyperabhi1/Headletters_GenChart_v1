@@ -21,16 +21,10 @@ Public Class GenChart
         Dim BirthSouth(12) As String
         Dim Horo As New TASystem.TrueAstro
 
-        Dim connection As SqlConnection = New SqlConnection("data source=49.50.103.132;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;User Id=sa;password=pSI)TA1t0K[)")
+        Dim connection As SqlConnection = New SqlConnection("data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);")
         Try
-            Dim cmd As New SqlCommand($"SELECT DISTINCT HUSERID, HID, RECTIFIEDDATE, RECTIFIEDTIME, RECTIFIEDDST, RECTIFIEDPLACE, 
-                                    RECTIFIEDLONGTITUDE, RECTIFIEDLONGTITUDEEW, RECTIFIEDLATITUDE,RECTIFIEDLATITUDENS, RECTIFIEDTZ
-                                    FROM HMAIN
-                                    INNER JOIN HREQUEST
-                                    ON HMAIN.HUSERID = HREQUEST.RQUSERID
-                                        AND HMAIN.HID = HREQUEST.RQHID
-                                    WHERE HREQUEST.REQCAT = '9'
-                                        AND HREQUEST.RQUNREAD = 'Y';", connection)
+            Dim cmd As New SqlCommand($"SELECT HUSERID, HID, RECTIFIEDDATE, RECTIFIEDTIME, RECTIFIEDDST, RECTIFIEDPLACE, RECTIFIEDLONGTITUDE, RECTIFIEDLONGTITUDEEW, RECTIFIEDLATITUDE,RECTIFIEDLATITUDENS, RECTIFIEDTIMEZONE
+	FROM HMAIN where HMAIN.HPDF IS NULL AND RECTIFIEDTIME IS NOT NULL AND RECTIFIEDDATE IS NOT NULL AND RECTIFIEDDST IS NOT NULL AND RECTIFIEDTIMEZONE IS NOT NULL", connection)
             Dim da As New SqlDataAdapter(cmd)
             Dim RowsData As New DataSet()
             da.Fill(RowsData)
@@ -146,6 +140,7 @@ Public Class GenChart
                 Catch ex As Exception
                     Dim strFile As String = String.Format("C:\inetpub\wwwroot\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
                     File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
+                    Continue For
                 End Try
             Next
         Catch ex As Exception
@@ -163,7 +158,7 @@ Public Class GenChart
         Dim con As New SqlConnection
         Dim cmd As New SqlCommand
         Try
-            con.ConnectionString = "data source=49.50.103.132;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;User Id=sa;password=pSI)TA1t0K[)"
+            con.ConnectionString = "data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);"
             con.Open()
             cmd.Connection = con
             Dim flag = False
@@ -172,9 +167,9 @@ Public Class GenChart
                     flag = True
                     Continue For
                 End If
-                cmd.CommandText = "INSERT INTO HEADLETTERS_ENGINE.DBO.HCUSP VALUES ('" + UID + "','" + HID + "','" + GetCuspNo(rowData.Split("|")(0)) + "','" + rowData.Split("|")(1) + "','" + rowData.Split("|")(2) + "','" + rowData.Split("|")(3) + "','" + rowData.Split("|")(4) + "','" + rowData.Split("|")(5) + "');"
-                cmd.ExecuteNonQuery()
+                cmd.CommandText = cmd.CommandText + "INSERT INTO HEADLETTERS_ENGINE.DBO.HCUSP VALUES ('" + UID + "','" + HID + "','" + GetCuspNo(rowData.Split("|")(0)) + "','" + rowData.Split("|")(1) + "','" + rowData.Split("|")(2) + "','" + rowData.Split("|")(3) + "','" + rowData.Split("|")(4) + "','" + rowData.Split("|")(5) + "');" + vbCrLf
             Next
+            cmd.ExecuteNonQuery()
         Catch ex As Exception
             Dim strFile As String = String.Format("C:\inetpub\wwwroot\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
             File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
@@ -186,7 +181,7 @@ Public Class GenChart
         Dim con As New SqlConnection
         Dim cmd As New SqlCommand
         Try
-            con.ConnectionString = "data source=49.50.103.132;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;User Id=sa;password=pSI)TA1t0K[)"
+            con.ConnectionString = "data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);"
             con.Open()
             cmd.Connection = con
             Dim flag = False
@@ -195,9 +190,9 @@ Public Class GenChart
                     flag = True
                     Continue For
                 End If
-                cmd.CommandText = "INSERT INTO HEADLETTERS_ENGINE.DBO.HPLANET VALUES ('" + UID + "','" + HID + "','" + GetPlanetShortName(rowData.Split("|")(0)) + "','" + rowData.Split("|")(1) + "','" + rowData.Split("|")(2) + "','" + rowData.Split("|")(3) + "','" + rowData.Split("|")(4) + "','" + rowData.Split("|")(5) + "','" + rowData.Split("|")(6) + "','" + rowData.Split("|")(7) + "','" + rowData.Split("|")(8) + "','" + GetCuspPrefix(rowData.Split("|")(10)) + "');"
-                cmd.ExecuteNonQuery()
+                cmd.CommandText = cmd.CommandText + "INSERT INTO HEADLETTERS_ENGINE.DBO.HPLANET VALUES ('" + UID + "','" + HID + "','" + GetPlanetShortName(rowData.Split("|")(0)) + "','" + rowData.Split("|")(1) + "','" + rowData.Split("|")(2) + "','" + rowData.Split("|")(3) + "','" + rowData.Split("|")(4) + "','" + rowData.Split("|")(5) + "','" + rowData.Split("|")(6) + "','" + rowData.Split("|")(7) + "','" + rowData.Split("|")(8) + "','" + GetCuspPrefix(rowData.Split("|")(10)) + "');" + vbCrLf
             Next
+            cmd.ExecuteNonQuery()
         Catch ex As Exception
             Dim strFile As String = String.Format("C:\inetpub\wwwroot\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
             File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
@@ -209,7 +204,7 @@ Public Class GenChart
         Dim con As New SqlConnection
         Dim cmd As New SqlCommand
         Try
-            con.ConnectionString = "data source=49.50.103.132;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;User Id=sa;password=pSI)TA1t0K[)"
+            con.ConnectionString = "data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);"
             con.Open()
             cmd.Connection = con
             Dim flag = False
@@ -228,7 +223,7 @@ Public Class GenChart
         Dim con As New SqlConnection
         Dim command As New SqlCommand
         Try
-            con.ConnectionString = "data source=49.50.103.132;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;User Id=sa;password=pSI)TA1t0K[)"
+            con.ConnectionString = "data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);"
             con.Open()
             command.Connection = con
             command.CommandText = $"UPDATE HREQUEST

@@ -10,7 +10,7 @@ Public Class UpdateCusp
         WriteToHRAKE(HID, UID)
     End Sub
     Sub GetCuspString(ByRef HID, ByRef UID)
-        Dim connection As SqlConnection = New SqlConnection("data source=49.50.103.132;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;User Id=sa;password=pSI)TA1t0K[)")
+        Dim connection As SqlConnection = New SqlConnection("data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);")
         Try
             Dim SelectHCUSP = "SELECT * FROM HEADLETTERS_ENGINE.DBO.HCUSP WHERE CUSPUSERID = '" + UID + "' AND CUSPHID = '" + HID + "';"
             connection.Open()
@@ -38,7 +38,7 @@ Public Class UpdateCusp
         End Try
     End Sub
     Sub UpdateCuspString(ByRef HID As String, ByRef UID As String)
-        Dim connection As SqlConnection = New SqlConnection("data source=49.50.103.132;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;User Id=sa;password=pSI)TA1t0K[)")
+        Dim connection As SqlConnection = New SqlConnection("data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);")
         Try
             Dim SelectHPLANET = "SELECT * FROM HEADLETTERS_ENGINE.DBO.HPLANET WHERE PLHUSERID = '" + UID + "' AND PLHID = '" + HID + "';"
             connection.Open()
@@ -123,7 +123,7 @@ Public Class UpdateCusp
         Dim con As New SqlConnection
         Dim cmd As New SqlCommand
         Try
-            con.ConnectionString = "data source=49.50.103.132;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;User Id=sa;password=pSI)TA1t0K[)"
+            con.ConnectionString = "data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);"
             con.Open()
             cmd.Connection = con
             Dim flag = False
@@ -149,7 +149,7 @@ Public Class UpdateCusp
         Dim SelectHPLANET_RA = "SELECT * FROM HEADLETTERS_ENGINE.DBO.HPLANET WHERE PLHUSERID = '" + UID + "' AND PLHID = '" + HID + "' AND PLANET = 'RA'"
         Dim SelectHPLANET_KE = "SELECT * FROM HEADLETTERS_ENGINE.DBO.HPLANET WHERE PLHUSERID = '" + UID + "' AND PLHID = '" + HID + "' AND PLANET = 'KE'"
         Try
-            Dim connection As SqlConnection = New SqlConnection("data source=49.50.103.132;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;User Id=sa;password=pSI)TA1t0K[)")
+            Dim connection As SqlConnection = New SqlConnection("data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);")
             connection.Open()
             Dim cmd As New SqlCommand(SelectHPLANET_RA, connection)
             Dim da As New SqlDataAdapter(cmd)

@@ -18,7 +18,7 @@ Public Class GenHTMLChart
         htmlBuilder.Append(vbCrLf + "<html lang='en'>")
         htmlBuilder.Append(vbCrLf + "")
         htmlBuilder.Append(vbCrLf + "<head>")
-        htmlBuilder.Append(vbCrLf + "    <meta charset='UTF-8'>")
+        htmlBuilder.Append(vbCrLf + "    <meta charset='utf-8' name='viewport' content='width=device-width initial-scale=0'>")
         htmlBuilder.Append(vbCrLf + "    <title>Document</title>")
         htmlBuilder.Append(vbCrLf + "</head>")
         htmlBuilder.Append(vbCrLf + "")
@@ -493,7 +493,7 @@ Public Class GenHTMLChart
         Dim con As New SqlConnection
         Dim cmd As New SqlCommand
         Try
-            con.ConnectionString = "data source=49.50.103.132;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;User Id=sa;password=pSI)TA1t0K[)"
+            con.ConnectionString = "data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);"
             con.Open()
             cmd.Connection = con
             cmd.CommandText = $"UPDATE HMAIN
