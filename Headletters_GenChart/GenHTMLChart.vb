@@ -3,15 +3,14 @@ Imports System.Security.Cryptography
 Imports System.Text
 Public Class GenHTMLChart
     Sub GenHTMLChartMain(ByRef HID As String, ByRef UID As String, ByRef P_List As String(), ByRef H_List As String(), ByRef BirthLagna As String(,), ByRef BirthBhav As String(,), ByRef BirthSouth As String(), ByRef DasaListP As DataTable, ByRef personalDetails As PersonalDetails)
-        Dim encryptedHIDUIDDateTime = Encrypt(HID + UID + DateTime.Now.ToString().Replace("/", "").Replace(" ", "").Replace(":", ""), "sblw-3hn8-sqoy19")
-        'Dim fPath = "C:\Users\sooraj singh\Documents\" + encryptedHIDUIDDateTime + ".html"
-        encryptedHIDUIDDateTime = encryptedHIDUIDDateTime.Replace("/", "_").Replace("\", "_")
-        Dim fPath = "C:\Astro\Templates\" + encryptedHIDUIDDateTime + ".html"
+        Dim HIDUIDDateTime = UID + "_" + HID + "_" + DateTime.Now.ToString("ddmmyyhhmmssmmm")
+        HIDUIDDateTime = HIDUIDDateTime.Replace("/", "_").Replace("\", "_")
+        Dim fPath = "C:\Astro\Templates\" + HIDUIDDateTime + ".html"
         Dim afile As New IO.StreamWriter(fPath, True)
         Dim text = HTMLStringBuilder(HID, UID, P_List, H_List, BirthLagna, BirthBhav, BirthSouth, DasaListP, personalDetails)
         afile.WriteLine(text)
         afile.Close()
-        UpdateLink(encryptedHIDUIDDateTime, HID, UID)
+        UpdateLink(HIDUIDDateTime, HID, UID)
     End Sub
     Function HTMLStringBuilder(ByRef HID As String, ByRef UID As String, ByRef P_List As String(), ByRef H_List As String(), ByRef BirthLagna As String(,), ByRef BirthBhav As String(,), ByRef BirthSouth As String(), ByRef DasaListP As DataTable, ByRef personalDetails As PersonalDetails) As String
         Dim htmlBuilder As StringBuilder = New StringBuilder()
@@ -20,7 +19,7 @@ Public Class GenHTMLChart
         htmlBuilder.Append(vbCrLf + "")
         htmlBuilder.Append(vbCrLf + "<head>")
         htmlBuilder.Append(vbCrLf + "    <meta charset='utf-8' name='viewport' content='width=device-width initial-scale=0'>")
-        htmlBuilder.Append(vbCrLf + "    <title>Document</title>")
+        htmlBuilder.Append(vbCrLf + "    <title>" + personalDetails.NameoftheChartOwner + " Chart</title>")
         htmlBuilder.Append(vbCrLf + "</head>")
         htmlBuilder.Append(vbCrLf + "")
         htmlBuilder.Append(vbCrLf + "<body>")
