@@ -7,10 +7,6 @@ Public Class GenChart
     Public Shared Sub Main()
         Dim UID = ""
         Dim HID = ""
-        Dim DateTimeB As New NameValueCollection
-        Dim PlaceDataB As New NameValueCollection
-        Dim BData As New NameValueCollection
-        Dim PlaceData As New NameValueCollection
         Dim personalDetails As PersonalDetails = New PersonalDetails()
         Dim P_list(12) As String
         Dim H_List(12) As String
@@ -30,6 +26,10 @@ Public Class GenChart
             da.Fill(RowsData)
             For i As Integer = 0 To RowsData.Tables(0).Rows.Count - 1
                 Try
+                    Dim DateTimeB As New NameValueCollection
+                    Dim PlaceDataB As New NameValueCollection
+                    Dim BData As New NameValueCollection
+                    Dim PlaceData As New NameValueCollection
                     UID = RowsData.Tables(0).Rows(i)(0).Trim.ToString()
                     HID = RowsData.Tables(0).Rows(i)(1).Trim.ToString()
                     Dim RECTIFIEDDATE = CType(RowsData.Tables(0).Rows(i)(2), DateTime).ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)
@@ -138,13 +138,13 @@ Public Class GenChart
                     genHTMLChart.GenHTMLChartMain(HID, UID, P_list, H_List, BirthLagna, BirthBhav, BirthSouth, DasaListP, personalDetails)
                     genChart.UpdateStatus(HID, UID)
                 Catch ex As Exception
-                    Dim strFile As String = String.Format("C:\inetpub\wwwroot\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
+                    Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
                     File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
                     Continue For
                 End Try
             Next
         Catch ex As Exception
-            Dim strFile As String = String.Format("C:\inetpub\wwwroot\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
+            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
             File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
         Finally
             connection.Close()
@@ -171,7 +171,7 @@ Public Class GenChart
             Next
             cmd.ExecuteNonQuery()
         Catch ex As Exception
-            Dim strFile As String = String.Format("C:\inetpub\wwwroot\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
+            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
             File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
         Finally
             con.Close()
@@ -194,7 +194,7 @@ Public Class GenChart
             Next
             cmd.ExecuteNonQuery()
         Catch ex As Exception
-            Dim strFile As String = String.Format("C:\inetpub\wwwroot\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
+            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
             File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
         Finally
             con.Close()
@@ -213,7 +213,7 @@ Public Class GenChart
                 cmd.ExecuteNonQuery()
             Next
         Catch ex As Exception
-            Dim strFile As String = String.Format("C:\inetpub\wwwroot\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
+            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
             File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
         Finally
             con.Close()
@@ -226,15 +226,10 @@ Public Class GenChart
             con.ConnectionString = "data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);"
             con.Open()
             command.Connection = con
-            command.CommandText = $"UPDATE HREQUEST
-                                    SET REQCAT = '7'
-                                    WHERE RQUSERID = '" + UID + "'
-                                        AND RQHID = '" + HID + "' 
-                                            AND HREQUEST.REQCAT = '9' 
-                                                AND HREQUEST.RQUNREAD = 'Y';"
+            command.CommandText = $"UPDATE HREQUEST SET REQCAT = '7' WHERE RQUSERID = '" + UID + "' AND RQHID = '" + HID + "'  AND HREQUEST.REQCAT = '9' AND HREQUEST.RQUNREAD = 'Y';"
             command.ExecuteNonQuery()
         Catch ex As Exception
-            Dim strFile As String = String.Format("C:\inetpub\wwwroot\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
+            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
             File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
         Finally
             con.Close()
