@@ -493,7 +493,7 @@ Public Class GenHTMLChart
         Dim con As New SqlConnection
         Dim cmd As New SqlCommand
         Try
-            con.ConnectionString = "data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);"
+            con.ConnectionString = Connstr.connstr
             con.Open()
             cmd.Connection = con
             cmd.CommandText = $"UPDATE HMAIN

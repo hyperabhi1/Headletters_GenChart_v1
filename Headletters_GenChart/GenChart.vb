@@ -2,7 +2,12 @@
 Imports System.Data.SqlClient
 Imports System.Globalization
 Imports System.IO
-
+Module Connstr
+    'public Dim connstr = "data source=NITESH-PC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=True;"
+    'public Dim connstr = "data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=True;multipleactiveresultsets=True;"
+    Public connstr = "data source=49.50.103.132;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;User Id=sa;password=pSI)TA1t0K[);"
+    'Public connstr = "data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);"
+End Module
 Public Class GenChart
     Public Shared Sub Main()
         Dim UID = ""
@@ -17,10 +22,12 @@ Public Class GenChart
         Dim BirthSouth(12) As String
         Dim Horo As New TASystem.TrueAstro
 
-        Dim connection As SqlConnection = New SqlConnection("data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);")
+        Dim connection As SqlConnection = New SqlConnection(Connstr.connstr)
         Try
-            Dim cmd As New SqlCommand($"SELECT HUSERID, HID, RECTIFIEDDATE, RECTIFIEDTIME, RECTIFIEDDST, RECTIFIEDPLACE, RECTIFIEDLONGTITUDE, RECTIFIEDLONGTITUDEEW, RECTIFIEDLATITUDE,RECTIFIEDLATITUDENS, RECTIFIEDTIMEZONE
-	FROM HMAIN where HMAIN.HPDF IS NULL AND RECTIFIEDTIME IS NOT NULL AND RECTIFIEDDATE IS NOT NULL AND RECTIFIEDDST IS NOT NULL AND RECTIFIEDTIMEZONE IS NOT NULL", connection)
+            Dim cmd As New SqlCommand($"SELECT HUSERID, HID, RECTIFIEDDATE, RECTIFIEDTIME, RECTIFIEDDST, RECTIFIEDPLACE, RECTIFIEDLONGTITUDE, RECTIFIEDLONGTITUDEEW, 
+                                        RECTIFIEDLATITUDE,RECTIFIEDLATITUDENS, RECTIFIEDTIMEZONE, HNAME, HDOBNATIVE, HPLACE, HHOURS, HMIN, HSS, HAMPM, HMARRIAGEDATE, HFIRSTCHILDPLACE
+	                                    FROM HMAIN where HMAIN.HPDF IS NULL AND RECTIFIEDTIME IS NOT NULL AND RECTIFIEDDATE IS NOT NULL AND RECTIFIEDDST IS NOT NULL 
+                                        AND RECTIFIEDTIMEZONE IS NOT NULL", connection)
             Dim da As New SqlDataAdapter(cmd)
             Dim RowsData As New DataSet()
             da.Fill(RowsData)
@@ -59,10 +66,22 @@ Public Class GenChart
                     Dim Place = ""
                     Dim State = ""
                     Dim Country = ""
-                    If RECTIFIEDPLACE.Contains("-") = True Then
+                    If RECTIFIEDPLACE.Split("-").Length = 3 Then
                         Place = RECTIFIEDPLACE.Split("-")(0)
                         State = RECTIFIEDPLACE.Split("-")(1)
                         Country = RECTIFIEDPLACE.Split("-")(2)
+                    ElseIf RECTIFIEDPLACE.Split("-").Length = 2 Then
+                        Place = RECTIFIEDPLACE.Split("-")(0)
+                        State = "NA"
+                        Country = RECTIFIEDPLACE.Split("-")(2)
+                    ElseIf RECTIFIEDPLACE.Split("-").Length = 1 Then
+                        Place = RECTIFIEDPLACE.Split("-")(0)
+                        State = "NA"
+                        Country = "NA"
+                    ElseIf RECTIFIEDPLACE.Contains("-") <> False Then
+                        Place = RECTIFIEDPLACE
+                        State = "NA"
+                        Country = "NA"
                     Else
                         Throw New System.Exception("Invalid RECTIFIEDPLACE format exception.")
                     End If
@@ -73,22 +92,16 @@ Public Class GenChart
                     personalDetails.PlaceofBirth = RECTIFIEDPLACE
                     personalDetails.Latitude = RECTIFIEDLATITUDE
                     personalDetails.Longitude = RECTIFIEDLONGTITUDE
-                    connection.Open()
-                    Dim command As New SqlCommand($"select USERNAME from UPROF WHERE USERID = '" + UID + "';", connection)
-                    Dim da0 As New SqlDataAdapter(command)
-                    Dim ds As New DataSet()
-                    da0.Fill(ds)
-                    connection.Close()
-                    personalDetails.NameoftheChartOwner = ds.Tables(0).Rows(0)(0).Trim.ToString()
+                    personalDetails.NameoftheChartOwner = RowsData.Tables(0).Rows(i)(11).ToString().Trim
                     personalDetails.Rashi = "Not yet provided by DLL"
                     personalDetails.Star = "Not yet provided by DLL"
                     personalDetails.SunSign = "Not yet provided by DLL"
                     personalDetails.BalanceDasa = "Not yet provided by DLL"
-                    personalDetails.OriginalDOBByChartOwner = "Not yet provided by DLL"
-                    personalDetails.OriginalPOBByChartOwner = "Not yet provided by DLL"
-                    personalDetails.OriginalTOBByChartOwner = "Not yet provided by DLL"
-                    personalDetails.Marriage = "Not yet provided by DLL"
-                    personalDetails.FirstChild = "Not yet provided by DLL"
+                    personalDetails.OriginalDOBByChartOwner = RowsData.Tables(0).Rows(i)(12).ToShortDateString
+                    personalDetails.OriginalPOBByChartOwner = RowsData.Tables(0).Rows(i)(13).ToString().Trim
+                    personalDetails.OriginalTOBByChartOwner = RowsData.Tables(0).Rows(i)(14).ToString() + ":" + RowsData.Tables(0).Rows(i)(15).ToString() + ":" + RowsData.Tables(0).Rows(i)(16).ToString() + " " + RowsData.Tables(0).Rows(i)(17).Trim
+                    personalDetails.Marriage = RowsData.Tables(0).Rows(i)(18).ToString().Trim
+                    personalDetails.FirstChild = RowsData.Tables(0).Rows(i)(19).ToString().Trim
                     personalDetails.LastCallRecieved = "Not yet provided by DLL"
                     personalDetails.DemiseOfRelatives = "Not yet provided by DLL"
 #End Region
@@ -126,8 +139,7 @@ Public Class GenChart
                     DasaListP.Columns.Add("Suk")
                     DasaListP.Columns.Add("Pra")
                     DasaListP.Columns.Add("Cl_Date")
-
-                    Horo.getBirthDasaFull(DateTimeB, PlaceDataB, DasaListP)
+                    Horo.getBirthDasaDBA(DateTimeB, PlaceDataB, DasaListP)
                     Dim genChart As GenChart = New GenChart()
                     genChart.UpdateHCUSP(HID, UID, H_List)
                     genChart.UpdateHPLANET(HID, UID, P_list)
@@ -158,7 +170,7 @@ Public Class GenChart
         Dim con As New SqlConnection
         Dim cmd As New SqlCommand
         Try
-            con.ConnectionString = "data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);"
+            con.ConnectionString = Connstr.connstr
             con.Open()
             cmd.Connection = con
             Dim flag = False
@@ -181,7 +193,7 @@ Public Class GenChart
         Dim con As New SqlConnection
         Dim cmd As New SqlCommand
         Try
-            con.ConnectionString = "data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);"
+            con.ConnectionString = Connstr.connstr
             con.Open()
             cmd.Connection = con
             Dim flag = False
@@ -204,7 +216,7 @@ Public Class GenChart
         Dim con As New SqlConnection
         Dim cmd As New SqlCommand
         Try
-            con.ConnectionString = "data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);"
+            con.ConnectionString = Connstr.connstr
             con.Open()
             cmd.Connection = con
             Dim flag = False
@@ -223,7 +235,7 @@ Public Class GenChart
         Dim con As New SqlConnection
         Dim command As New SqlCommand
         Try
-            con.ConnectionString = "data source=WIN-KSTUPT6CJRC;initial catalog=ASTROLOGYSOFTWARE_DB;integrated security=False;multipleactiveresultsets=True;User Id=sa;password=pSI)TA1t0K[);"
+            con.ConnectionString = Connstr.connstr
             con.Open()
             command.Connection = con
             command.CommandText = $"UPDATE HREQUEST SET REQCAT = '7' WHERE RQUSERID = '" + UID + "' AND RQHID = '" + HID + "'  AND HREQUEST.REQCAT = '9' AND HREQUEST.RQUNREAD = 'Y';"
