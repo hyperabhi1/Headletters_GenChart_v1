@@ -445,7 +445,7 @@ Public Class GenHTMLChart
         htmlBuilder.Append(vbCrLf + "                            <th style='border-collapse: collapse;padding: 8px;color: #33334B;font-family: sans-serif;font-size: 14px;   border-bottom: 1px solid #ddd;border-right: 1px solid #ddd;width: 279px;border-right: 0;'>Closing Date & Time</th>")
         htmlBuilder.Append(vbCrLf + "                        </tr>")
         htmlBuilder.Append(vbCrLf + "                    </thead>")
-        htmlBuilder.Append(vbCrLf + "                    <tbody style='height:150px;overflow-x:hidden;display:block;width:100%;'>")
+        htmlBuilder.Append(vbCrLf + "                    <tbody style='height:300px;overflow-x:hidden;display:block;width:100%;'>")
         For i As Integer = 0 To DasaListP.Rows.Count - 1
             htmlBuilder.Append(vbCrLf + "                        <tr>")
             htmlBuilder.Append(vbCrLf + "                            <td style='width: 93px;border-collapse: collapse;padding: 8px;color: #33334B;font-family: sans-serif;font-size: 14px;border-right: 1px solid #ddd;'>" + DasaListP.Rows(i).ItemArray(0) + "</td>")

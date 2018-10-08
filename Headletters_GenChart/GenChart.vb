@@ -24,9 +24,9 @@ Public Class GenChart
 
         Dim connection As SqlConnection = New SqlConnection(Connstr.connstr)
         Try
-            Dim cmd As New SqlCommand($"SELECT HUSERID, HID, RECTIFIEDDATE, RECTIFIEDTIME, RECTIFIEDDST, RECTIFIEDPLACE, RECTIFIEDLONGTITUDE, RECTIFIEDLONGTITUDEEW, 
-                                        RECTIFIEDLATITUDE,RECTIFIEDLATITUDENS, RECTIFIEDTIMEZONE, HNAME, HDOBNATIVE, HPLACE, HHOURS, HMIN, HSS, HAMPM, HMARRIAGEDATE, HFIRSTCHILDPLACE
-	                                    FROM HMAIN where HMAIN.HPDF IS NULL AND RECTIFIEDTIME IS NOT NULL AND RECTIFIEDDATE IS NOT NULL AND RECTIFIEDDST IS NOT NULL 
+            Dim cmd As New SqlCommand($"SELECT HUSERID, HID, RECTIFIEDDATE, RECTIFIEDTIME, RECTIFIEDDST, RECTIFIEDPLACE, RECTIFIEDLONGTITUDE, RECTIFIEDLONGTITUDEEW, RECTIFIEDLATITUDE,
+                                        RECTIFIEDLATITUDENS, RECTIFIEDTIMEZONE, HNAME, HDOBNATIVE, HPLACE, HHOURS, HMIN, HSS, HAMPM, HMARRIAGEDATE, HFIRSTCHILDPLACE, HCRDATE, HDRR, HDRRD
+	                                    FROM ASTROLOGYSOFTWARE_DB.DBO.HMAIN where HMAIN.HPDF IS NULL AND RECTIFIEDTIME IS NOT NULL AND RECTIFIEDDATE IS NOT NULL AND RECTIFIEDDST IS NOT NULL 
                                         AND RECTIFIEDTIMEZONE IS NOT NULL", connection)
             Dim da As New SqlDataAdapter(cmd)
             Dim RowsData As New DataSet()
@@ -90,8 +90,8 @@ Public Class GenChart
                     personalDetails.DayofBirth = GetDayOfTheWeek(DateTime.Parse(RECTIFIEDDATE.Split(" ")(0).Replace("-", "/")).DayOfWeek)
                     personalDetails.TimeofBirth = RECTIFIEDDATE.Split(" ")(1)
                     personalDetails.PlaceofBirth = RECTIFIEDPLACE
-                    personalDetails.Latitude = RECTIFIEDLATITUDE
-                    personalDetails.Longitude = RECTIFIEDLONGTITUDE
+                    personalDetails.Latitude = RECTIFIEDLATITUDE.Remove(2, 1).Insert(2, "°").Remove(5, 1).Insert(5, "'") & """"
+                    personalDetails.Longitude = RECTIFIEDLONGTITUDE.Remove(2, 1).Insert(2, "°").Remove(5, 1).Insert(5, "'") & """"
                     personalDetails.NameoftheChartOwner = RowsData.Tables(0).Rows(i)(11).ToString().Trim
                     personalDetails.Rashi = "Not yet provided by DLL"
                     personalDetails.Star = "Not yet provided by DLL"
@@ -102,8 +102,8 @@ Public Class GenChart
                     personalDetails.OriginalTOBByChartOwner = RowsData.Tables(0).Rows(i)(14).ToString() + ":" + RowsData.Tables(0).Rows(i)(15).ToString() + ":" + RowsData.Tables(0).Rows(i)(16).ToString() + " " + RowsData.Tables(0).Rows(i)(17).Trim
                     personalDetails.Marriage = RowsData.Tables(0).Rows(i)(18).ToString().Trim
                     personalDetails.FirstChild = RowsData.Tables(0).Rows(i)(19).ToString().Trim
-                    personalDetails.LastCallRecieved = "Not yet provided by DLL"
-                    personalDetails.DemiseOfRelatives = "Not yet provided by DLL"
+                    personalDetails.LastCallRecieved = RowsData.Tables(0).Rows(i)(20).ToString().Trim
+                    personalDetails.DemiseOfRelatives = RowsData.Tables(0).Rows(i)(21).ToString().Trim & " at: " + RowsData.Tables(0).Rows(i)(22).ToString().Trim
 #End Region
                     Dim lon, lat, geoLat, Tz As Double
                     lon = RECTIFIEDLONGTITUDE.Split("^")(0) + RECTIFIEDLONGTITUDE.Split("^")(1) / 60 + RECTIFIEDLONGTITUDE.Split("^")(2) / 3600
@@ -238,7 +238,8 @@ Public Class GenChart
             con.ConnectionString = Connstr.connstr
             con.Open()
             command.Connection = con
-            command.CommandText = $"UPDATE HREQUEST SET REQCAT = '7' WHERE RQUSERID = '" + UID + "' AND RQHID = '" + HID + "'  AND HREQUEST.REQCAT = '9' AND HREQUEST.RQUNREAD = 'Y';"
+            command.CommandText = $"UPDATE ASTROLOGYSOFTWARE_DB.DBO.HREQUEST SET REQCAT = '7' WHERE RQUSERID = '" + UID + "' AND RQHID = '" + HID + "'  AND HREQUEST.REQCAT = '9' AND HREQUEST.RQUNREAD = 'Y';
+                                    UPDATE ASTROLOGYSOFTWARE_DB.DBO.HMAIN SET HSTATUS = '5' WHERE HUSERID = '" + UID + "' AND HID = '" + HID + "';"
             command.ExecuteNonQuery()
         Catch ex As Exception
             Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
