@@ -501,7 +501,7 @@ Public Class GenHTMLChart
                                     WHERE HUSERID = '" + UID + "' AND HID = '" + HID + "'"
             cmd.ExecuteNonQuery()
         Catch ex As Exception
-            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
+            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
             IO.File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
         Finally
             con.Close()
