@@ -3,7 +3,7 @@
     Protected Overrides Sub OnStart(ByVal args() As String)
         'System.Diagnostics.Debugger.Launch()
         timer = New Timers.Timer()
-        timer.Interval = 45000
+        timer.Interval = 30000
         AddHandler timer.Elapsed, AddressOf TriggerGenChart
         timer.Enabled = True
         Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ServiceStatusLog_{0}.txt", DateTime.Today.ToString("ddMMMyyyy"))
