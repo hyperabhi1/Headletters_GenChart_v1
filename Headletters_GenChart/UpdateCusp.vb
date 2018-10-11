@@ -31,7 +31,7 @@ Public Class UpdateCusp
             ST(10) = (ds.Tables(0).Rows(10)).ItemArray(5).ToString() + (ds.Tables(0).Rows(10)).ItemArray(6).ToString() + (ds.Tables(0).Rows(10)).ItemArray(7).ToString()
             ST(11) = (ds.Tables(0).Rows(11)).ItemArray(5).ToString() + (ds.Tables(0).Rows(11)).ItemArray(6).ToString() + (ds.Tables(0).Rows(11)).ItemArray(7).ToString()
         Catch ex As Exception
-            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
+            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog.txt")
             IO.File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
         Finally
             connection.Close()
@@ -113,7 +113,7 @@ Public Class UpdateCusp
                 End Select
             Next
         Catch ex As Exception
-            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
+            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog.txt")
             IO.File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
         Finally
             connection.Close()
@@ -133,7 +133,7 @@ Public Class UpdateCusp
                 cmd.ExecuteNonQuery()
             Next
         Catch ex As Exception
-            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
+            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog.txt")
             IO.File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
         Finally
             con.Close()
@@ -212,7 +212,7 @@ Public Class UpdateCusp
             Dim ds1 As New DataSet()
             da1.Fill(ds1)
         Catch ex As Exception
-            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog_{1}_{0}.txt", HID + UID, DateTime.Today.ToString("ddMMMyyyy"))
+            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog.txt")
             IO.File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
         End Try
     End Sub
