@@ -122,6 +122,7 @@ Public Class UpdateCusp
     Sub WriteToCUSP(ByRef HID, ByRef UID)
         Dim con As New SqlConnection
         Dim cmd As New SqlCommand
+        Dim UpdateREPORTS = "UPDATE HEADLETTERS_ENGINE.DBO.REPORT SET CUSP = 1 WHERE UID = '" + UID + "' AND HID = '" + HID + "';"
         Try
             con.ConnectionString = Connstr.connstr
             con.Open()
@@ -132,6 +133,8 @@ Public Class UpdateCusp
                 cmd.CommandText = "INSERT INTO HEADLETTERS_ENGINE.DBO.CUSP VALUES ('" + UID + "','" + HID + "','" + C(i) + "','" + ST(i).ToUpper() + "');"
                 cmd.ExecuteNonQuery()
             Next
+            cmd.CommandText = UpdateREPORTS
+            cmd.ExecuteNonQuery()
         Catch ex As Exception
             Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog.txt")
             IO.File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
@@ -146,6 +149,7 @@ Public Class UpdateCusp
         Dim R2 As String = ""
         Dim K1 As String = ""
         Dim K2 As String = ""
+        Dim UpdateREPORTS = "UPDATE HEADLETTERS_ENGINE.DBO.REPORT SET HRAKE = 1 WHERE UID = '" + UID + "' AND HID = '" + HID + "';"
         Dim SelectHPLANET_RA = "SELECT * FROM HEADLETTERS_ENGINE.DBO.HPLANET WHERE PLHUSERID = '" + UID + "' AND PLHID = '" + HID + "' AND PLANET = 'RA'"
         Dim SelectHPLANET_KE = "SELECT * FROM HEADLETTERS_ENGINE.DBO.HPLANET WHERE PLHUSERID = '" + UID + "' AND PLHID = '" + HID + "' AND PLANET = 'KE'"
         Try
@@ -207,7 +211,7 @@ Public Class UpdateCusp
             Dim InsertHRAKE_RA = "INSERT INTO HEADLETTERS_ENGINE.DBO.HRAKE VALUES ('" + UID + "','" + HID + "','RA','" + FR1.ToUpper() + "');"
             Dim InsertHRAKE_KE = "INSERT INTO HEADLETTERS_ENGINE.DBO.HRAKE VALUES ('" + UID + "','" + HID + "','KE','" + FK1.ToUpper() + "');"
             connection.Open()
-            Dim cmd1 As New SqlCommand(InsertHRAKE_RA + InsertHRAKE_KE, connection)
+            Dim cmd1 As New SqlCommand(InsertHRAKE_RA + InsertHRAKE_KE + UpdateREPORTS, connection)
             Dim da1 As New SqlDataAdapter(cmd1)
             Dim ds1 As New DataSet()
             da1.Fill(ds1)

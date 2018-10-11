@@ -145,6 +145,7 @@ Public Class GenChart
 #End Region
                     'BasicData.GetValues("Rashi")(0)
                     Dim genChart As GenChart = New GenChart()
+                    genChart.UpdateREPORT(UID, HID)
                     genChart.UpdateHCUSP(HID, UID, H_List)
                     genChart.UpdateHPLANET(HID, UID, P_list)
                     genChart.UpdateHDASA(HID, UID, DasaListP)
@@ -166,6 +167,22 @@ Public Class GenChart
             connection.Close()
         End Try
     End Sub
+    Sub UpdateREPORT(ByRef UID As String, ByRef HID As String)
+        Dim con As New SqlConnection
+        Dim cmd As New SqlCommand
+        Try
+            con.ConnectionString = Connstr.connstr
+            con.Open()
+            cmd.Connection = con
+            cmd.CommandText = "DELETE FROM HEADLETTERS_ENGINE.DBO.REPORT WHERE UID = '" + UID + "' AND HID = '" + HID + "'; INSERT INTO HEADLETTERS_ENGINE.DBO.REPORT (UID, HID) VALUES ('" + UID + "','" + HID + "');"
+            cmd.ExecuteNonQuery()
+        Catch ex As Exception
+            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog.txt")
+            File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
+        Finally
+            con.Close()
+        End Try
+    End Sub
     Public Shared Function GetDayOfTheWeek(ByVal day As String) As String
         Dim DayOfWeek() = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}
         Return DayOfWeek(Convert.ToInt32(day))
@@ -173,6 +190,7 @@ Public Class GenChart
     Sub UpdateHCUSP(ByRef HID As String, ByRef UID As String, ByRef H_List As String())
         Dim con As New SqlConnection
         Dim cmd As New SqlCommand
+        Dim UpdateREPORTS = "UPDATE HEADLETTERS_ENGINE.DBO.REPORT SET HCUSP = 1 WHERE UID = '" + UID + "' AND HID = '" + HID + "';"
         Try
             con.ConnectionString = Connstr.connstr
             con.Open()
@@ -185,6 +203,7 @@ Public Class GenChart
                 End If
                 cmd.CommandText = cmd.CommandText + "INSERT INTO HEADLETTERS_ENGINE.DBO.HCUSP VALUES ('" + UID + "','" + HID + "','" + GetCuspNo(rowData.Split("|")(0)) + "','" + rowData.Split("|")(1) + "','" + rowData.Split("|")(2) + "','" + rowData.Split("|")(3) + "','" + rowData.Split("|")(4) + "','" + rowData.Split("|")(5) + "');" + vbCrLf
             Next
+            cmd.CommandText = cmd.CommandText + UpdateREPORTS
             cmd.ExecuteNonQuery()
         Catch ex As Exception
             Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog.txt")
@@ -196,6 +215,7 @@ Public Class GenChart
     Sub UpdateHPLANET(ByRef HID As String, ByRef UID As String, ByRef P_List As String())
         Dim con As New SqlConnection
         Dim cmd As New SqlCommand
+        Dim UpdateREPORTS = "UPDATE HEADLETTERS_ENGINE.DBO.REPORT SET HPLANET = 1 WHERE UID = '" + UID + "' AND HID = '" + HID + "';"
         Try
             con.ConnectionString = Connstr.connstr
             con.Open()
@@ -208,6 +228,7 @@ Public Class GenChart
                 End If
                 cmd.CommandText = cmd.CommandText + "INSERT INTO HEADLETTERS_ENGINE.DBO.HPLANET VALUES ('" + UID + "','" + HID + "','" + GetPlanetShortName(rowData.Split("|")(0)) + "','" + rowData.Split("|")(1) + "','" + rowData.Split("|")(2) + "','" + rowData.Split("|")(3) + "','" + rowData.Split("|")(4) + "','" + rowData.Split("|")(5) + "','" + rowData.Split("|")(6) + "','" + rowData.Split("|")(7) + "','" + rowData.Split("|")(8) + "','" + GetCuspPrefix(rowData.Split("|")(10)) + "');" + vbCrLf
             Next
+            cmd.CommandText = cmd.CommandText + UpdateREPORTS
             cmd.ExecuteNonQuery()
         Catch ex As Exception
             Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog.txt")
@@ -219,6 +240,7 @@ Public Class GenChart
     Sub UpdateHDASA(ByRef HID As String, ByRef UID As String, ByRef DasaListP As DataTable)
         Dim con As New SqlConnection
         Dim cmd As New SqlCommand
+        Dim UpdateREPORTS = "UPDATE HEADLETTERS_ENGINE.DBO.REPORT SET HDASA = 1 WHERE UID = '" + UID + "' AND HID = '" + HID + "';"
         Try
             con.ConnectionString = Connstr.connstr
             con.Open()
@@ -228,6 +250,8 @@ Public Class GenChart
                 cmd.CommandText = "INSERT INTO HEADLETTERS_ENGINE.DBO.HDASA VALUES ('" + UID + "','" + HID + "','" + ((DasaListP.Rows.Item(i)).ItemArray(0) + (DasaListP.Rows.Item(i)).ItemArray(1) + (DasaListP.Rows.Item(i)).ItemArray(2) + (DasaListP.Rows.Item(i)).ItemArray(3) + (DasaListP.Rows.Item(i)).ItemArray(4)).ToString().ToUpper() + "','" + Convert.ToString(DasaListP.Rows.Item(i).ItemArray(5)).Split(" :: ")(0) + "','" + Convert.ToString(DasaListP.Rows.Item(i).ItemArray(5)).Split(" :: ")(2) + "');"
                 cmd.ExecuteNonQuery()
             Next
+            cmd.CommandText = UpdateREPORTS
+            cmd.ExecuteNonQuery()
         Catch ex As Exception
             Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog.txt")
             File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
@@ -238,6 +262,7 @@ Public Class GenChart
     Sub UpdateStatus(ByRef HID As String, ByRef UID As String)
         Dim con As New SqlConnection
         Dim command As New SqlCommand
+        Dim UpdateREPORTS = "UPDATE HEADLETTERS_ENGINE.DBO.REPORT SET CHART_WORK = 1 WHERE UID = '" + UID + "' AND HID = '" + HID + "';"
         Try
             con.ConnectionString = Connstr.connstr
             con.Open()
@@ -245,6 +270,7 @@ Public Class GenChart
             command.CommandText = $"UPDATE ASTROLOGYSOFTWARE_DB.DBO.HMAIN SET HSTATUS = '5' WHERE HUSERID = '" + UID + "' AND HID = '" + HID + "';"
             'command.CommandText = $"UPDATE ASTROLOGYSOFTWARE_DB.DBO.HREQUEST SET REQCAT = '7' WHERE RQUSERID = '" + UID + "' AND RQHID = '" + HID + "'  AND HREQUEST.REQCAT = '9' AND HREQUEST.RQUNREAD = 'Y';
             '                        UPDATE ASTROLOGYSOFTWARE_DB.DBO.HMAIN SET HSTATUS = '5' WHERE HUSERID = '" + UID + "' AND HID = '" + HID + "';"
+            command.CommandText = command.CommandText + UpdateREPORTS
             command.ExecuteNonQuery()
         Catch ex As Exception
             Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog.txt")
