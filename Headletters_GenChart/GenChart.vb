@@ -138,13 +138,14 @@ Public Class GenChart
                     personalDetails.OriginalDOBByChartOwner = RowsData.Tables(0).Rows(i)(12).ToShortDateString
                     personalDetails.OriginalPOBByChartOwner = RowsData.Tables(0).Rows(i)(13).ToString().Trim
                     personalDetails.OriginalTOBByChartOwner = RowsData.Tables(0).Rows(i)(14).ToString() + ":" + RowsData.Tables(0).Rows(i)(15).ToString() + ":" + RowsData.Tables(0).Rows(i)(16).ToString() + " " + RowsData.Tables(0).Rows(i)(17).Trim
-                    personalDetails.Marriage = RowsData.Tables(0).Rows(i)(18).ToString().Trim
-                    personalDetails.FirstChild = RowsData.Tables(0).Rows(i)(19).ToString().Trim
-                    personalDetails.LastCallRecieved = RowsData.Tables(0).Rows(i)(20).ToString().Trim
-                    personalDetails.DemiseOfRelatives = RowsData.Tables(0).Rows(i)(21).ToString().Trim & " at: " + RowsData.Tables(0).Rows(i)(22).ToString().Trim
+                    personalDetails.Marriage = If(RowsData.Tables(0).Rows(i)(18).ToString().Trim.ToUpper() = "NULL", "", RowsData.Tables(0).Rows(i)(18).ToString().Trim)
+                    personalDetails.FirstChild = If(RowsData.Tables(0).Rows(i)(19).ToString().Trim.ToUpper() = "NULL", "", RowsData.Tables(0).Rows(i)(19).ToString().Trim)
+                    personalDetails.LastCallRecieved = If(RowsData.Tables(0).Rows(i)(20).ToString().Trim.ToUpper() = "NULL", "", RowsData.Tables(0).Rows(i)(20).ToString().Trim)
+                    personalDetails.DemiseOfRelatives = If(RowsData.Tables(0).Rows(i)(21).ToString().Trim.ToUpper() = "NULL", "", RowsData.Tables(0).Rows(i)(21).ToString().Trim)
 #End Region
                     'BasicData.GetValues("Rashi")(0)
                     Dim genChart As GenChart = New GenChart()
+                    genChart.DELETE_ALL_RECORDS(UID, HID)
                     genChart.UpdateREPORT(UID, HID)
                     genChart.UpdateHCUSP(HID, UID, H_List)
                     genChart.UpdateHPLANET(HID, UID, P_list)
@@ -165,6 +166,29 @@ Public Class GenChart
             File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
         Finally
             connection.Close()
+        End Try
+    End Sub
+    Sub DELETE_ALL_RECORDS(ByRef UID As String, ByRef HID As String)
+        Dim con As New SqlConnection
+        Dim cmd As New SqlCommand
+        Try
+            con.ConnectionString = Connstr.connstr
+            con.Open()
+            cmd.Connection = con
+            cmd.CommandText = "DELETE FROM HEADLETTERS_ENGINE.DBO.REPORT WHERE UID = '" + UID + "' AND HID = '" + HID + "';
+                               DELETE FROM HEADLETTERS_ENGINE.DBO.CUSP WHERE UID = '" + UID + "' AND HID = '" + HID + "';
+                               DELETE FROM HEADLETTERS_ENGINE.DBO.HCUSP WHERE CUSPUSERID = '" + UID + "' AND CUSPHID = '" + HID + "';
+                               DELETE FROM HEADLETTERS_ENGINE.DBO.HRAKE WHERE UID = '" + UID + "' AND HID = '" + HID + "';
+                               DELETE FROM HEADLETTERS_ENGINE.DBO.HDASA WHERE PDUSERID = '" + UID + "' AND PDHID = '" + HID + "';
+                               DELETE FROM HEADLETTERS_ENGINE.DBO.HPLANET WHERE PLHUSERID = '" + UID + "' AND PLHID = '" + HID + "';
+                               DELETE FROM HEADLETTERS_ENGINE.DBO.MATCHFILE WHERE UID = '" + UID + "' AND HID = '" + HID + "';
+                               DELETE FROM HEADLETTERS_ENGINE.DBO.MATCHFILE_ASC WHERE UID = '" + UID + "' AND HID = '" + HID + "';"
+            cmd.ExecuteNonQuery()
+        Catch ex As Exception
+            Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog.txt")
+            File.AppendAllText(strFile, String.Format(vbCrLf + "Error Occured at-- {0}{1}{2}", Environment.NewLine + DateTime.Now, Environment.NewLine, ex.Message + vbCrLf + ex.StackTrace))
+        Finally
+            con.Close()
         End Try
     End Sub
     Sub UpdateREPORT(ByRef UID As String, ByRef HID As String)

@@ -3,8 +3,8 @@ Imports System.Security.Cryptography
 Imports System.Text
 Public Class GenHTMLChart
     Sub GenHTMLChartMain(ByRef HID As String, ByRef UID As String, ByRef P_List As String(), ByRef H_List As String(), ByRef BirthLagna As String(,), ByRef BirthBhav As String(,), ByRef BirthSouth As String(), ByRef DasaListP As DataTable, ByRef personalDetails As PersonalDetails)
-        Dim HIDUIDDateTime = UID + "_" + HID + "_" + DateTime.Now.ToString("ddmmyyhhmmssmmm")
-        HIDUIDDateTime = HIDUIDDateTime.Replace("/", "_").Replace("\", "_")
+        Dim HIDUIDDateTime = UID + "_" + HID
+        'HIDUIDDateTime = HIDUIDDateTime.Replace("/", "_").Replace("\", "_")
         Dim fPath = "C:\Astro\Templates\" + HIDUIDDateTime + ".html"
         Dim afile As New IO.StreamWriter(fPath, True)
         Dim text = HTMLStringBuilder(HID, UID, P_List, H_List, BirthLagna, BirthBhav, BirthSouth, DasaListP, personalDetails)
@@ -446,10 +446,10 @@ Public Class GenHTMLChart
         htmlBuilder.Append(vbCrLf + "                    <tbody style='height:300px;overflow-x:hidden;display:block;width:100%;'>")
         For i As Integer = 0 To DasaListP.Rows.Count - 1
             htmlBuilder.Append(vbCrLf + "                        <tr>")
-            htmlBuilder.Append(vbCrLf + "                            <td style='width: 120.66px;border-collapse: collapse;padding: 8px;color: #33334B;font-family: sans-serif;font-size: 14px;border-right: 1px solid #ddd;'>" + DasaListP.Rows(i).ItemArray(0) + "</td>")
-            htmlBuilder.Append(vbCrLf + "                            <td style='width: 120.66px;border-collapse: collapse;padding: 8px;color: #33334B;font-family: sans-serif;font-size: 14px;border-right: 1px solid #ddd;'>" + DasaListP.Rows(i).ItemArray(1) + "</td>")
-            htmlBuilder.Append(vbCrLf + "                            <td style='width: 120.66px;border-collapse: collapse;padding: 8px;color: #33334B;font-family: sans-serif;font-size: 14px;border-right: 1px solid #ddd;'>" + DasaListP.Rows(i).ItemArray(2) + "</td>")
-            htmlBuilder.Append(vbCrLf + "                            <td style='width: 361.98px;border-collapse: collapse;padding: 8px;color: #33334B;font-family: sans-serif;font-size: 14px;border-right: 1px solid #ddd;'>" + DasaListP.Rows(i).ItemArray(5) + "</td>")
+            htmlBuilder.Append(vbCrLf + "                            <td style='text-align:center; width: 120.66px;border-collapse: collapse;padding: 8px;color: #33334B;font-family: sans-serif;font-size: 14px;border-right: 1px solid #ddd;'>" + DasaListP.Rows(i).ItemArray(0) + "</td>")
+            htmlBuilder.Append(vbCrLf + "                            <td style='text-align:center; width: 120.66px;border-collapse: collapse;padding: 8px;color: #33334B;font-family: sans-serif;font-size: 14px;border-right: 1px solid #ddd;'>" + DasaListP.Rows(i).ItemArray(1) + "</td>")
+            htmlBuilder.Append(vbCrLf + "                            <td style='text-align:center; width: 120.66px;border-collapse: collapse;padding: 8px;color: #33334B;font-family: sans-serif;font-size: 14px;border-right: 1px solid #ddd;'>" + DasaListP.Rows(i).ItemArray(2) + "</td>")
+            htmlBuilder.Append(vbCrLf + "                            <td style='text-align:center; width: 361.98px;border-collapse: collapse;padding: 8px;color: #33334B;font-family: sans-serif;font-size: 14px;border-right: 1px solid #ddd;'>" + DasaListP.Rows(i).ItemArray(5) + "</td>")
             htmlBuilder.Append(vbCrLf + "                        </tr>")
         Next
         htmlBuilder.Append(vbCrLf + "                    </tbody>")
