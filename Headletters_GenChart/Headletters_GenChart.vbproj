@@ -121,6 +121,9 @@
     <Compile Include="ProjectInstaller.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Promise.vb" />
+    <Compile Include="Promise1.vb" />
+    <Compile Include="PromiseRAKE.vb" />
     <Compile Include="UpdateCusp.vb" />
   </ItemGroup>
   <ItemGroup>

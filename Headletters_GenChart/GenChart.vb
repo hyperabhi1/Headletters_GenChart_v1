@@ -41,6 +41,8 @@ Public Class GenChart
                     Dim BasicData As New NameValueCollection
                     UID = RowsData.Tables(0).Rows(i)(0).Trim.ToString()
                     HID = RowsData.Tables(0).Rows(i)(1).Trim.ToString()
+                    Dim RECTIFIEDDATE_Personal = CType(RowsData.Tables(0).Rows(i)(2), DateTime).ToString("dd-MM-yyyy HH:mm:ss tt", CultureInfo.InvariantCulture)
+
                     Dim RECTIFIEDDATE = CType(RowsData.Tables(0).Rows(i)(2), DateTime).ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)
                     Dim RECTIFIEDTIME = CType(RowsData.Tables(0).Rows(i)(3).ToString(), DateTime).ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture)
                     Dim RECTIFIEDDST = RowsData.Tables(0).Rows(i)(4).ToString().Trim
@@ -124,12 +126,12 @@ Public Class GenChart
                     Horo.getBirthDasaDBA(DateTimeB, PlaceDataB, DasaListP)
                     Horo.getBirthInfo(DateTimeB, PlaceDataB, BasicData)
 #Region "Personal Details"
-                    personalDetails.DateofBirth = RECTIFIEDDATE.Split(" ")(0)
+                    personalDetails.DateofBirth = RECTIFIEDDATE_Personal.Split(" ")(0)
                     personalDetails.DayofBirth = GetDayOfTheWeek(DateTime.Parse(RECTIFIEDDATE.Split(" ")(0).Replace("-", "/")).DayOfWeek)
-                    personalDetails.TimeofBirth = RECTIFIEDDATE.Split(" ")(1)
+                    personalDetails.TimeofBirth = RECTIFIEDDATE_Personal.Split(" ")(1) + " " + RECTIFIEDDATE_Personal.Split(" ")(2)
                     personalDetails.PlaceofBirth = RECTIFIEDPLACE
-                    personalDetails.Latitude = RECTIFIEDLATITUDE.Remove(2, 1).Insert(2, "°").Remove(5, 1).Insert(5, "'") & """"
-                    personalDetails.Longitude = RECTIFIEDLONGTITUDE.Remove(2, 1).Insert(2, "°").Remove(5, 1).Insert(5, "'") & """"
+                    personalDetails.Latitude = RECTIFIEDLATITUDE.Split("^")(0) + "° " + RECTIFIEDLATITUDE.Split("^")(1) + "' " + RECTIFIEDLATITUDE.Split("^")(2) + """ " & RECTIFIEDLATITUDENS
+                    personalDetails.Longitude = RECTIFIEDLONGTITUDE.Split("^")(0) + "° " + RECTIFIEDLONGTITUDE.Split("^")(1) + "' " + RECTIFIEDLONGTITUDE.Split("^")(2) + """ " & RECTIFIEDLONGTITUDEEW
                     personalDetails.NameoftheChartOwner = RowsData.Tables(0).Rows(i)(11).ToString().Trim
                     personalDetails.Rashi = BasicData("Rashi")
                     personalDetails.Star = BasicData("NakPada")
@@ -143,7 +145,6 @@ Public Class GenChart
                     personalDetails.LastCallRecieved = If(RowsData.Tables(0).Rows(i)(20).ToString().Trim.ToUpper() = "NULL", "", RowsData.Tables(0).Rows(i)(20).ToString().Trim)
                     personalDetails.DemiseOfRelatives = If(RowsData.Tables(0).Rows(i)(21).ToString().Trim.ToUpper() = "NULL", "", RowsData.Tables(0).Rows(i)(21).ToString().Trim)
 #End Region
-                    'BasicData.GetValues("Rashi")(0)
                     Dim genChart As GenChart = New GenChart()
                     genChart.DELETE_ALL_RECORDS(UID, HID)
                     genChart.UpdateREPORT(UID, HID)
@@ -154,6 +155,8 @@ Public Class GenChart
                     updateCusp.UpdateCusp(HID, UID)
                     Dim genHTMLChart As GenHTMLChart = New GenHTMLChart()
                     genHTMLChart.GenHTMLChartMain(HID, UID, P_list, H_List, BirthLagna, BirthBhav, BirthSouth, DasaListP, personalDetails)
+                    Dim Promise_RAKE As New PromiseRAKE
+                    Promise_RAKE.MainHIDUID(UID, HID)
                     genChart.UpdateStatus(HID, UID)
                 Catch ex As Exception
                     Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog.txt")
@@ -172,6 +175,7 @@ Public Class GenChart
         Dim con As New SqlConnection
         Dim cmd As New SqlCommand
         Try
+            cmd.CommandTimeout = 1800
             con.ConnectionString = Connstr.connstr
             con.Open()
             cmd.Connection = con
@@ -180,9 +184,7 @@ Public Class GenChart
                                DELETE FROM HEADLETTERS_ENGINE.DBO.HCUSP WHERE CUSPUSERID = '" + UID + "' AND CUSPHID = '" + HID + "';
                                DELETE FROM HEADLETTERS_ENGINE.DBO.HRAKE WHERE UID = '" + UID + "' AND HID = '" + HID + "';
                                DELETE FROM HEADLETTERS_ENGINE.DBO.HDASA WHERE PDUSERID = '" + UID + "' AND PDHID = '" + HID + "';
-                               DELETE FROM HEADLETTERS_ENGINE.DBO.HPLANET WHERE PLHUSERID = '" + UID + "' AND PLHID = '" + HID + "';
-                               DELETE FROM HEADLETTERS_ENGINE.DBO.MATCHFILE WHERE UID = '" + UID + "' AND HID = '" + HID + "';
-                               DELETE FROM HEADLETTERS_ENGINE.DBO.MATCHFILE_ASC WHERE UID = '" + UID + "' AND HID = '" + HID + "';"
+                               DELETE FROM HEADLETTERS_ENGINE.DBO.HPLANET WHERE PLHUSERID = '" + UID + "' AND PLHID = '" + HID + "';"
             cmd.ExecuteNonQuery()
         Catch ex As Exception
             Dim strFile As String = String.Format("C:\Astro\ServiceLogs\ChartGeneration\ErrorLog.txt")
